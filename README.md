@@ -6,8 +6,8 @@ FASTA or FASTQ select from list
 ---------------------------------------------------------------
 #Running DATMA
 ---------------------------------------------------------------
-selectFasta -list <file with headers to select> -fastq <original fastq file> -fasta_sel <br/>
-selectFasta -list <file with headers to select> -fasta <original fasta file> -fasta_sel
+selectFasta -list file_with_headers_to_select -fastq original_fastq_file -fasta_sel <br/>
+selectFasta -list file_with_headers_to_select -fasta original_fastq_file -fasta_sel
 
 ---------------------------------------------------------------
 #License
