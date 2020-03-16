@@ -12,4 +12,4 @@ selectFasta -list <file with headers to select> -fasta <original fasta file> -fa
 ---------------------------------------------------------------
 #License
 --------------------------------------------------------------
-This project is licensed under the GPLv3 License - see the LICENSE file for details
+This project is licensed under the GPLv3 License - see the [LICENSE] (https://github.com/voutcn/megahit/blob/master/LICENSE) file for details
