@@ -12,4 +12,4 @@ selectFasta -list file_with_headers_to_select -fasta original_fastq_file -fasta_
 ---------------------------------------------------------------
 #License
 --------------------------------------------------------------
-This project is licensed under the GPLv3 License - see the [LICENSE](https://github.com/andvides/selectFasta/blob/master/LICENSE) file for details
+This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details
