@@ -33,7 +33,8 @@ bool IsParam(char arg[],const char comp[]);
 void selectfastq(Names& names);
 void selectfasta(Names& names);
 void fastq2fasta(Names& names);
-void getrandom(Names& names);
+void getrandomFastq(Names& names);
+void getrandomFasta(Names& names);
 static uintmax_t wc(char const *fname);
 
 int main(int argc,char *argv[])
@@ -137,7 +138,12 @@ int main(int argc,char *argv[])
     error = true;
   } 
   if (not error && args.fastq && args.randn) {
-    getrandom(names);
+    getrandomFastq(names);
+    found1 = true;
+    error = true;
+  }
+  if (not error && args.fasta && args.randn) {
+    getrandomFasta(names);
     found1 = true;
     error = true;
   }
@@ -148,7 +154,51 @@ int main(int argc,char *argv[])
   return 0;
 }
 
-void getrandom(Names& names) 
+void getrandomFasta(Names& names)
+{
+  string line, salida;
+  ifstream in;
+  unordered_map <int, int> lista;
+  unordered_map <int, int>::const_iterator got;
+  srand ( unsigned ( time(0) ) );  
+    
+  int total_lines = 0;
+  in.open(names.fasta.c_str());
+  while (getline(in,line).good()) {
+    if (line.at(0) == '>') 
+      total_lines++;
+  }
+  in.close();
+  
+  int count = 0;
+  while (count < names.randn) {
+    int newn = rand()%total_lines;
+    got = lista.find(newn); 
+    if ( got == lista.end() ) {
+      lista[newn] = 1;
+      count++;
+    }
+  }
+  
+  bool mostrar = false;
+  in.open(names.fasta.c_str());
+  total_lines = 0;
+  while (getline(in,line).good()) {
+    if (line.at(0) == '>') {
+      mostrar = false;
+      got = lista.find(total_lines);
+      if ( got != lista.end() ) {
+        mostrar = true;
+        cout << line << endl;
+      }
+      total_lines++;
+    }
+    else if(mostrar)
+        cout << line << endl;
+  }
+}
+
+void getrandomFastq(Names& names) 
 {
   string line, salida;
   ifstream in;
@@ -391,10 +441,11 @@ void printerror(const char arg[])
     cout << "  -h                  (Help)" << endl;
     cout << "  -fastq        FILE  (fastq file to select reads from) " << endl;
     cout << "  -list         FILE  (list of reads, fastq or fasta) " << endl;
-    cout << "  -random       VAL   (number of random reads to be selected from fastq file) " << endl;
+    cout << "  -random       VAL   (number of random reads to be selected from fasta/fastq file) " << endl;
     cout << "  -fastq2fasta        (convert fastq file to fasta)" << endl;
     cout << "  -fasta        FILE  (fasta file to select reads from) " << endl;
     cout << "  -fasta_sel          (from fasta file select reads in -list, if not flag, reads not in list are selected)" << endl;
     cout << ""<< endl;
 
 }
+
