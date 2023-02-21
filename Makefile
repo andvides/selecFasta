@@ -5,7 +5,7 @@ MAIN = selectFasta
 
 
 all:    $(MAIN)
-	@echo  RAPIFILT has been compiled
+	@echo  selecFasta v2.1 has been compiled
 $(MAIN): $(OBJS1)
 	$(CPP) $(CPPFLAGS) $(SRCS_cpp) -o $(MAIN) 
 
