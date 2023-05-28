@@ -24,8 +24,8 @@
 using std::tr1::unordered_map;
 using namespace std;
 
-struct Args { bool fastq; bool lista; bool randn; bool fastq2fasta; bool fasta; bool fasta_sel;};
-struct Names { string fastq; string lista; int randn; bool fastq2fasta; string fasta; bool fasta_sel;};
+struct Args { bool fastq; bool lista; bool randn; bool fastq2fasta; bool fasta; bool fasta_sel; bool seed;};
+struct Names { string fastq; string lista; int randn; bool fastq2fasta; string fasta; bool fasta_sel; int seed;};
 
 int mstrlen(const char arg[]);
 void printerror(const char arg[]);
@@ -33,14 +33,14 @@ bool IsParam(char arg[],const char comp[]);
 void selectfastq(Names& names);
 void selectfasta(Names& names);
 void fastq2fasta(Names& names);
-void getrandomFastq(Names& names);
-void getrandomFasta(Names& names);
+void getrandomFastq(Names& names, int seed);
+void getrandomFasta(Names& names, int seed);
 static uintmax_t wc(char const *fname);
 
 int main(int argc,char *argv[])
 {
   bool   error = false, found1;
-  Args   args = {false,false,false,false,false,false};
+  Args   args = {false,false,false,false,false,false,false};
   Names  names;
   int    argum = 1;
 
@@ -111,6 +111,19 @@ int main(int argc,char *argv[])
       found1 = true;
       continue;
     }
+    if ( IsParam(argv[argum],"-seed") ) {
+      argum ++;
+      if (argum < argc) { //verifica si el parametro existe
+        args.seed = true;
+        names.seed = atoi(argv[argum]);
+      } else {
+        error = true;
+      }
+      argum ++;
+      found1 = true;
+      continue;
+    }
+    
     if (not found1) {
       error = true;
     }
@@ -138,12 +151,18 @@ int main(int argc,char *argv[])
     error = true;
   } 
   if (not error && args.fastq && args.randn) {
-    getrandomFastq(names);
+    int seed=time(NULL);
+    if(args.seed)
+      seed=names.seed;
+    getrandomFastq(names,seed);
     found1 = true;
     error = true;
   }
   if (not error && args.fasta && args.randn) {
-    getrandomFasta(names);
+    int seed=time(NULL);
+    if(args.seed)
+      seed=names.seed;
+    getrandomFasta(names,seed);
     found1 = true;
     error = true;
   }
@@ -154,7 +173,7 @@ int main(int argc,char *argv[])
   return 0;
 }
 
-void getrandomFasta(Names& names)
+void getrandomFasta(Names& names, int seed)
 {
   string line, salida;
   ifstream in;
@@ -171,6 +190,7 @@ void getrandomFasta(Names& names)
   in.close();
   
   int count = 0;
+  srand(seed);
   while (count < names.randn) {
     int newn = rand()%total_lines;
     got = lista.find(newn); 
@@ -198,7 +218,7 @@ void getrandomFasta(Names& names)
   }
 }
 
-void getrandomFastq(Names& names) 
+void getrandomFastq(Names& names, int seed) 
 {
   string line, salida;
   ifstream in;
@@ -210,6 +230,7 @@ void getrandomFastq(Names& names)
   int total_lines = wc(names.fastq.c_str())/4;
 
   int count = 0;
+  srand(seed);
   while (count < names.randn) {
     int newn = rand()%total_lines;
     got = lista.find(newn); 
@@ -445,7 +466,7 @@ void printerror(const char arg[])
     cout << "  -fastq2fasta        (convert fastq file to fasta)" << endl;
     cout << "  -fasta        FILE  (fasta file to select reads from) " << endl;
     cout << "  -fasta_sel          (from fasta file select reads in -list, if not flag, reads not in list are selected)" << endl;
+    cout << "  -seed         INT   (use random seed)" << endl;
     cout << ""<< endl;
 
 }
-
